@@ -162,7 +162,7 @@ function processPlist(action, project_plist_file, plugin_et) {
         for(i=0; i < plistObj.ExternalHosts.length;i++) {
             matched = false;
             hosts.forEach(function(host) {
-                if(host === plistObj.ExternalHosts[i])
+                if(host.attrib['origin'] === plistObj.ExternalHosts[i])
                 {
                     matched = true;
                 }

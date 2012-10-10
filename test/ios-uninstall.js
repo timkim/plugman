@@ -8,7 +8,7 @@ var fs = require('fs')
   , ios = require(path.join(__dirname, '..', 'platforms', 'ios'))
 
   , test_dir = path.join(osenv.tmpdir(), 'test_pluginstall')
-  , test_project_dir = path.join(test_dir, 'projects', 'ios')
+  , test_project_dir = path.join(test_dir, 'projects', 'testproj')
   , test_plugin_dir = path.join(test_dir, 'plugins', 'ChildBrowser')
   , xml_path     = path.join(test_dir, 'plugins', 'ChildBrowser', 'plugin.xml')
   , xml_text, plugin_et, plugin_id
