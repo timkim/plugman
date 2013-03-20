@@ -66,16 +66,22 @@ exports.listAllPlugins = function(success, error) {
     });
 }
 
-exports.clonePluginGitRepo = function(plugin_git_url) {
+exports.clonePluginGitRepo = function(plugin_git_url, targetDir) {
     if(!shell.which('git')) {
         throw new Error('git command line is not installed');
     }
-    // use osenv to get a temp directory in a portable way
-    plugin_dir = path.join(osenv.tmpdir(), 'plugin');
     
+    if(!targetDir){
+        // use osenv to get a temp directory in a portable way
+        plugin_dir = path.join(osenv.tmpdir(), 'plugin');
+    }else{
+        plugin_dir = path.resolve(targetDir);
+    }
     // trash it if it already exists (something went wrong before probably)
     if(fs.existsSync(plugin_dir)) {
         shell.rm('-rf', plugin_dir);
+    }else{
+        shell.mkdir(plugin_dir);
     }
 
     if(shell.exec('git clone ' + plugin_git_url + ' ' + plugin_dir + ' 2>&1 1>/dev/null', {silent: true}).code != 0) {
@@ -85,8 +91,10 @@ exports.clonePluginGitRepo = function(plugin_git_url) {
     process.on('exit', function() {
         console.log('cleaning up...');
         // clean up
-        if(fs.existsSync(plugin_dir)) {
-            shell.rm('-rf', plugin_dir);
+        if(!targetDir){
+            if(fs.existsSync(plugin_dir)) {
+                shell.rm('-rf', plugin_dir);
+            }
         }
     });
 

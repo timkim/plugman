@@ -124,7 +124,8 @@ function handlePlugin(action, platform, project_dir, plugin_dir, cli_variables) 
 
     // clone from git repository
     if(plugin_dir.indexOf('https://') == 0 || plugin_dir.indexOf('git://') == 0) {
-        plugin_dir = plugins.clonePluginGitRepo(plugin_dir);
+        var targetName = plugin_dir.substr(plugin_dir.lastIndexOf('/') + 1)
+        plugin_dir = plugins.clonePluginGitRepo(plugin_dir, path.join('plugins',targetName));
     }
 
     plugin_xml_path = path.join(plugin_dir, 'plugin.xml');
