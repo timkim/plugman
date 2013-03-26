@@ -125,22 +125,29 @@ function execAction(action, platform, project_dir, plugin_dir) {
 function fetchPlugin(plugin_dir) {
     // Ensure the containing directory exists.
     shell.mkdir('-p', plugins_dir);
-
+    
     // clone from git repository
     if(plugin_dir.indexOf('https://') == 0 || plugin_dir.indexOf('git://') == 0) {
         plugin_dir = plugins.clonePluginGitRepo(plugin_dir, plugins_dir);
-    } else { // Copy from the local filesystem.
-        var lastSlash = plugin_dir.lastIndexOf(path.sep);
-        var dest = plugin_dir;
-        if (lastSlash >= 0) {
-            dest = dest.substring(lastSlash+1);
-        }
-        dest = path.join(plugins_dir, dest);
-
-        shell.rm('-rf', dest);
-        shell.cp('-R', plugin_dir, plugins_dir); // Yes, not dest.
-
-        plugin_dir = dest;
+    } else { // Check if it's a plugin registered otherwise copy from the local filesystem.
+        plugins.getPluginInfo(plugin_dir,
+            function(plugin_info) {
+                plugin_dir = plugins.clonePluginGitRepo(plugin_info.url, plugins_dir);
+            },
+            function(e) {
+                var lastSlash = plugin_dir.lastIndexOf(path.sep);
+                var dest = plugin_dir;
+                if (lastSlash >= 0) {
+                    dest = dest.substring(lastSlash+1);
+                }
+                dest = path.join(plugins_dir, dest);
+        
+                shell.rm('-rf', dest);
+                shell.cp('-R', plugin_dir, plugins_dir); // Yes, not dest.
+        
+                plugin_dir = dest;
+            }
+        );
     }
 }
 
